@@ -7,6 +7,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using LumenWorks.Framework.IO.Csv;
 
 namespace AddressVerification
@@ -17,20 +19,55 @@ namespace AddressVerification
 
         public static void Main(string[] args)
         {
-            Validator validator = new Validator(USPSWebtoolUserID);
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            Validator validator = new Validator(USPSWebtoolUserID, true);
 
             Address addr = new Address();
-            addr.Address2 = "1930 N. Mansards Blvd.";
-            addr.City = "Griffith";
-            addr.State = "IN";
-            addr.Zip = "46319";
 
-            var result = validator.ValidateAddress(addr);
+            var file = "/Users/nideshchitrakar/Documents/CHE database/address verification/Is-bad-address.csv";
 
-            foreach (KeyValuePair<string, string> kvp in result)
+            // open a file which is a CSV file with headers
+            using (CsvReader csv = new CsvReader(new StreamReader(file), true))
             {
-                Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
+                int fieldCount = csv.FieldCount;
+
+                string[] headers = csv.GetFieldHeaders();
+
+                while (csv.ReadNextRecord())
+                {
+                    addr.Address2 = csv["Address"];
+                    addr.City = csv["City"];
+                    addr.State = csv["State"];
+                    addr.Zip = csv["ZipCode"];
+
+                    var result = validator.ValidateAddress(addr);
+
+                    if (result.ContainsKey("Error"))
+                    {
+                        for (int i = 0; i < fieldCount; i++)
+                            Console.Write(string.Format("{0} = {1};",
+                                          headers[i], csv[i]));
+                        Console.WriteLine();
+                    }
+                }
             }
+
+            //foreach (KeyValuePair<string, string> kvp in result)
+            //{
+            //    Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
+            //}
+
+            stopWatch.Stop();
+            // Get the elapsed time as a TimeSpan value.
+            TimeSpan ts = stopWatch.Elapsed;
+
+            // Format and display the TimeSpan value.
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                ts.Hours, ts.Minutes, ts.Seconds,
+                ts.Milliseconds / 10);
+            Console.WriteLine("Run Time: " + elapsedTime);
         }
     }
 }
