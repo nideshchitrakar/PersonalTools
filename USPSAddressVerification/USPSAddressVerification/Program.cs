@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using LumenWorks.Framework.IO.Csv;
+using USPSAddressVerification;
 
 namespace AddressVerification
 {
@@ -31,12 +33,25 @@ namespace AddressVerification
             int totalErrors = 0;
             int totalActionReq = 0;
 
+            var errorFile = "/Users/nideshchitrakar/Documents/CHE database/address verification/error-list.csv";
+            var correctFile = "/Users/nideshchitrakar/Documents/CHE database/address verification/correct-list.csv";
+
+            CsvWriter errorWriter = new CsvWriter(errorFile);
+            CsvWriter correctWriter = new CsvWriter(correctFile);
+
             // open a file which is a CSV file with headers
             using (CsvReader csv = new CsvReader(new StreamReader(file), true))
             {
                 int fieldCount = csv.FieldCount;
 
-                string[] headers = csv.GetFieldHeaders();
+                var errorHeaders = csv.GetFieldHeaders().ToList();
+                errorHeaders.Add("Error");
+
+                var correctHeaders = csv.GetFieldHeaders().ToList();
+                correctHeaders.Add("Action Required");
+
+                errorWriter.WriteHeader(errorHeaders);
+                correctWriter.WriteHeader(correctHeaders);
 
                 while (csv.ReadNextRecord())
                 {
@@ -53,22 +68,40 @@ namespace AddressVerification
                     {
                         totalErrors += 1;
 
+                        List<string> row = new List<string>();
                         for (int i = 0; i < fieldCount; i++)
-                            Console.Write(string.Format("{0} = {1};",
-                                          headers[i], csv[i]));
-                        Console.WriteLine();
+                        {
+                            row.Add(csv[i]);
+                        }
+                        row.Add(result["Error"]);
+
+                        errorWriter.AppendRow(row);
                     }
                     else if (result.ContainsKey("Action Required"))
                     {
                         totalActionReq += 1;
+
+                        List<string> row = new List<string>();
+                        for (int i = 0; i < fieldCount; i++)
+                        {
+                            row.Add(csv[i]);
+                        }
+                        row.Add(result["Action Required"]);
+
+                        correctWriter.AppendRow(row);
+                    }
+                    else
+                    {
+                        List<string> row = new List<string>();
+                        for (int i = 0; i < fieldCount; i++)
+                        {
+                            row.Add(csv[i]);
+                        }
+
+                        correctWriter.AppendRow(row);
                     }
                 }
             }
-
-            //foreach (KeyValuePair<string, string> kvp in result)
-            //{
-            //    Console.WriteLine("{0}: {1}", kvp.Key, kvp.Value);
-            //}
 
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
@@ -78,6 +111,7 @@ namespace AddressVerification
             string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
+            Console.WriteLine();
             Console.WriteLine("Run Time: " + elapsedTime);
             Console.WriteLine("Total records scanned: " + totalScanned);
             Console.WriteLine("Total errors detected: " + totalErrors);
