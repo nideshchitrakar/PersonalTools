@@ -1,4 +1,10 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////
+///     Address.cs - Address class defines an address object. Also contains
+///                  function to return address from an XML object.
+///     Author: Nidesh Chitrakar (nideshchitrakar)
+///     Date: 01/08/2018
+////////////////////////////////////////////////////////////////////////////////
+
 using System.Collections.Generic;
 using System.Text;
 
