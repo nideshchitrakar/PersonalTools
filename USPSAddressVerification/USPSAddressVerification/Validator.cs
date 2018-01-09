@@ -120,7 +120,7 @@ namespace AddressVerification
                 Console.WriteLine(resp);
                 Console.ReadKey();
 
-                result.Add("Error",resp);
+                result.Add("Exception",resp);
                 return result;
             }
         }
