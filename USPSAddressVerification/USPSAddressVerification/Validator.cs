@@ -101,7 +101,7 @@ namespace AddressVerification
                 }
                 else if (addressxml.Contains("<Zip4/>"))
                 {
-                    result.Add("Error", "Invalid XML tag. Contains <Zip/4>");
+                    result.Add("Action Required", "Zip4 missing. Address may not be deliverable.");
                 }
                 else if (addressxml.Contains("<ReturnText>"))
                 {
