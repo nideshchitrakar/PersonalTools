@@ -27,6 +27,9 @@ namespace AddressVerification
             Address addr = new Address();
 
             var file = "/Users/nideshchitrakar/Documents/CHE database/address verification/Is-bad-address.csv";
+            int totalScanned = 0;
+            int totalErrors = 0;
+            int totalActionReq = 0;
 
             // open a file which is a CSV file with headers
             using (CsvReader csv = new CsvReader(new StreamReader(file), true))
@@ -37,6 +40,8 @@ namespace AddressVerification
 
                 while (csv.ReadNextRecord())
                 {
+                    totalScanned += 1;
+
                     addr.Address2 = csv["Address"];
                     addr.City = csv["City"];
                     addr.State = csv["State"];
@@ -46,10 +51,16 @@ namespace AddressVerification
 
                     if (result.ContainsKey("Error"))
                     {
+                        totalErrors += 1;
+
                         for (int i = 0; i < fieldCount; i++)
                             Console.Write(string.Format("{0} = {1};",
                                           headers[i], csv[i]));
                         Console.WriteLine();
+                    }
+                    else if (result.ContainsKey("Action Required"))
+                    {
+                        totalActionReq += 1;
                     }
                 }
             }
@@ -68,6 +79,9 @@ namespace AddressVerification
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
             Console.WriteLine("Run Time: " + elapsedTime);
+            Console.WriteLine("Total records scanned: " + totalScanned);
+            Console.WriteLine("Total errors detected: " + totalErrors);
+            Console.WriteLine("Total actions required: " + totalActionReq);
         }
     }
 }
