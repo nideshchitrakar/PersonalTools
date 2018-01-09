@@ -1,4 +1,9 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////
+///     CsvWriter.cs - Helper class to write data into csv files
+///     Author: Nidesh Chitrakar (nideshchitrakar)
+///     Date: 01/09/2018
+////////////////////////////////////////////////////////////////////////////////
+
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -10,17 +15,17 @@ namespace USPSAddressVerification
         private string filename;
         private int columnNumber;
 
-        public CsvWriter(Stream stream) : base(stream)
-        {
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:USPSAddressVerification.CsvWriter"/> class.
+        /// </summary>
+        /// <param name="filename">Filename of the csv file to write on.</param>
         public CsvWriter(string filename) : base(filename)
         {
             this.filename = filename;
         }
 
         /// <summary>
-        /// Writes the header.
+        /// Writes the header in the csv file.
         /// </summary>
         /// <param name="headers">Array of Headers.</param>
         /// <param name="addHeaders">Add additional headers to the csv file.</param>

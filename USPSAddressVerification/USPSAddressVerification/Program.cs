@@ -33,13 +33,15 @@ namespace AddressVerification
             int totalErrors = 0;
             int totalActionReq = 0;
 
+            // replace the following with directory to write the error and correct addresses files in
+            // files will be created if no files already exists
             var errorFile = "/Users/nideshchitrakar/Documents/CHE database/address verification/error-list.csv";
             var correctFile = "/Users/nideshchitrakar/Documents/CHE database/address verification/correct-list.csv";
 
             CsvWriter errorWriter = new CsvWriter(errorFile);
             CsvWriter correctWriter = new CsvWriter(correctFile);
 
-            // open a file which is a CSV file with headers
+            // open a file which is a CSV file with headers to read from
             using (CsvReader csv = new CsvReader(new StreamReader(file), true))
             {
                 int fieldCount = csv.FieldCount;
