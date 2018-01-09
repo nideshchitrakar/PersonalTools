@@ -6,10 +6,6 @@ namespace AddressVerification
 {
     public class Address
     {
-        public Address()
-        {
-        }
-
         private string _FirmName = "";
         /// <summary>
         /// Name of the Firm or Company
@@ -106,13 +102,13 @@ namespace AddressVerification
 
             System.Xml.XmlNode element = doc.SelectSingleNode("/AddressValidateResponse/Address/FirmName");
             if (element != null)
-                address.Add("FirmName", element.InnerText);
+                address.Add("Company Name", element.InnerText);
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Address1");
             if (element != null)
-                address.Add("Address1", element.InnerText);
+                address.Add("Apt / Suite / Other", element.InnerText);
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Address2");
             if (element != null)
-                address.Add("Address2", element.InnerText);
+                address.Add("Street Address", element.InnerText);
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/City");
             if (element != null)
                 address.Add("City", element.InnerText);
@@ -136,7 +132,6 @@ namespace AddressVerification
         public string ToXml()
         {
             StringBuilder sb = new StringBuilder();
-            //sb.Append("<Address ID=\"" + this.ID.ToString() + "\">");
             sb.Append("<Address1>" + this._Address1 + "</Address1>");
             sb.Append("<Address2>" + this._Address2 + "</Address2>");
             sb.Append("<City>" + this.City + "</City>");

@@ -1,5 +1,14 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////
+///     Validator.cs - Checks the validity of an address using USPS API.
+///                    Built using reference from USPS Web Tools Wrapper by
+///                    user johnnycantcode from codeproject.com
+///     Author: Nidesh Chitrakar (nideshchitrakar)
+///     Date: 01/08/2018
+////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 
 namespace AddressVerification
@@ -80,31 +89,38 @@ namespace AddressVerification
                 url = String.Format(url, userid, address.Address1, address.Address2, address.City, address.State, address.Zip, address.ZipPlus4);
 
                 string addressxml = web.DownloadString(url);
+                result = Address.FromXml(addressxml);
+
                 if (addressxml.Contains("<Error>"))
                 {
                     int idx1 = addressxml.IndexOf("<Description>") + 13;
                     int idx2 = addressxml.IndexOf("</Description>");
-                    int l = addressxml.Length;
                     string errDesc = addressxml.Substring(idx1, idx2 - idx1);
-                    //throw new USPSManagerException(errDesc);
+
+                    result.Add("Error", errDesc);
                 }
                 else if (addressxml.Contains("<Zip4/>"))
                 {
                     result.Add("Error", "Invalid XML tag. Contains <Zip/4>");
                 }
-                else
+                else if (addressxml.Contains("<ReturnText>"))
                 {
-                    
+                    int idx1 = addressxml.IndexOf("<ReturnText>") + 12;
+                    int idx2 = addressxml.IndexOf("</ReturnText>");
+                    string errDesc = addressxml.Substring(idx1, idx2 - idx1);
+
+                    result.Add("Action Required", errDesc);
                 }
-                result = Address.FromXml(addressxml);
+
                 return result;
             }
             catch (WebException ex)
             {
-                Console.WriteLine(ex.ToString());
-                //throw new USPSManagerException(ex);
-                result.Add("Error",ex.ToString());
+                var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                Console.WriteLine(resp);
+                Console.ReadKey();
 
+                result.Add("Error",resp);
                 return result;
             }
         }
