@@ -1,10 +1,10 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-///     Validator.cs - Checks the validity of an address using USPS API.
-///                    Built using reference from USPS Web Tools Wrapper by
-///                    user johnnycantcode from codeproject.com
-///     Author: Nidesh Chitrakar (nideshchitrakar)
-///     Date: 01/08/2018
-////////////////////////////////////////////////////////////////////////////////
+﻿/*
+    Validator.cs - Checks the validity of an address using USPS API.
+                   Built using reference from USPS Web Tools Wrapper by
+                   user johnnycantcode from codeproject.com
+    Author: Nidesh Chitrakar (nideshchitrakar)
+    Date: 01/08/2018
+*/
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace AddressVerification
 {
     public class Validator
     {
-        private const string ProductionUrl = "http://production.shippingapis.com/ShippingAPItest.dll";
+        private const string ProductionUrl = "http://production.shippingapis.com/ShippingAPI.dll";
         private const string TestingUrl = "http://testing.shippingapis.com/ShippingAPITest.dll";
         private WebClient web;
         private string userid;
@@ -86,7 +86,14 @@ namespace AddressVerification
                     "</Address>" +
                     "</AddressValidateRequest>";
                 string url = GetURL() + validateUrl;
-                url = String.Format(url, userid, address.Address1, address.Address2, address.City, address.State, address.Zip, address.ZipPlus4);
+                url = String.Format(url,
+                                    userid,
+                                    address.Address1,
+                                    address.Address2,
+                                    address.City,
+                                    address.State,
+                                    address.Zip,
+                                    address.ZipPlus4);
 
                 string addressxml = web.DownloadString(url);
                 result = Address.FromXml(addressxml);
@@ -118,7 +125,7 @@ namespace AddressVerification
             {
                 var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                 Console.WriteLine(resp);
-                Console.ReadKey();
+                //Console.ReadKey();
 
                 result.Add("Exception",resp);
                 return result;

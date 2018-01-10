@@ -1,8 +1,8 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-///     CsvWriter.cs - Helper class to write data into csv files
-///     Author: Nidesh Chitrakar (nideshchitrakar)
-///     Date: 01/09/2018
-////////////////////////////////////////////////////////////////////////////////
+﻿/*
+    CsvWriter.cs - Helper class to write data into csv files
+    Author: Nidesh Chitrakar (nideshchitrakar)
+    Date: 01/09/2018
+*/
 
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +13,6 @@ namespace USPSAddressVerification
     public class CsvWriter : StreamWriter
     {
         private string filename;
-        private int columnNumber;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:USPSAddressVerification.CsvWriter"/> class.
@@ -29,7 +28,6 @@ namespace USPSAddressVerification
         /// </summary>
         /// <param name="headers">Array of Headers.</param>
         /// <param name="addHeaders">Add additional headers to the csv file.</param>
-        //public void WriteHeader(string[] headers, string[] addHeaders = null)
         public void WriteHeader(List<string> headers)
         {
             StringBuilder builder = new StringBuilder();
@@ -37,7 +35,6 @@ namespace USPSAddressVerification
             {
                 if (i < headers.Count - 1) builder.Append("\"" + headers[i] + "\",");
                 else builder.Append("\"" + headers[i] + "\"\n");
-                columnNumber += 1;
             }
             File.WriteAllText(filename, builder.ToString());
         }
