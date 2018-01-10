@@ -1,9 +1,9 @@
-﻿////////////////////////////////////////////////////////////////////////////////
-///     Address.cs - Address class defines an address object. Also contains
-///                  function to return address from an XML object.
-///     Author: Nidesh Chitrakar (nideshchitrakar)
-///     Date: 01/08/2018
-////////////////////////////////////////////////////////////////////////////////
+﻿/*
+    Address.cs - Address class defines an address object. Also contains a
+                 function to return address from an XML object.
+    Author: Nidesh Chitrakar (nideshchitrakar)
+    Date: 01/08/2018
+*/
 
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +30,7 @@ namespace AddressVerification
         public string Address1
         {
             get { return _Address1; }
-            set { _Address1 = value; }
+            set { _Address1 = value.Replace('#', ' '); }
         }
 
         private string _Address2 = "";
@@ -41,7 +41,7 @@ namespace AddressVerification
         public string Address2
         {
             get { return _Address2; }
-            set { _Address2 = value; }
+            set { _Address2 = value.Replace('#', ' '); }
         }
 
         private string _City = "";
@@ -103,31 +103,55 @@ namespace AddressVerification
         {
             Dictionary<string, string> address = new Dictionary<string, string>();
 
+            StringBuilder formattedAddress = new StringBuilder();
+
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
             doc.LoadXml(xml);
 
             System.Xml.XmlNode element = doc.SelectSingleNode("/AddressValidateResponse/Address/FirmName");
             if (element != null)
+            {
                 address.Add("Company Name", element.InnerText);
+                formattedAddress.Append(element.InnerText + ", ");
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Address1");
             if (element != null)
+            {
                 address.Add("Apt / Suite / Other", element.InnerText);
+                formattedAddress.Append(element.InnerText + ", ");
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Address2");
             if (element != null)
+            {
                 address.Add("Street Address", element.InnerText);
+                formattedAddress.Append(element.InnerText + ", ");
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/City");
             if (element != null)
+            {
                 address.Add("City", element.InnerText);
+                formattedAddress.Append(element.InnerText + ", ");
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/State");
             if (element != null)
+            {
                 address.Add("State", element.InnerText);
+                formattedAddress.Append(element.InnerText + ", ");
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Zip5");
             if (element != null)
+            {
                 address.Add("Zip5", element.InnerText);
+                formattedAddress.Append(element.InnerText);
+            }
             element = doc.SelectSingleNode("/AddressValidateResponse/Address/Zip4");
             if (element != null)
+            {
                 address.Add("Zip4", element.InnerText);
+                formattedAddress.Append("-" + element.InnerText);
+            }
 
+            address.Add("Formatted Address",formattedAddress.ToString());
             return address;
         }
 
